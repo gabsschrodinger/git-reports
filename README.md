@@ -24,6 +24,10 @@ To generate a report, use the terminal to go to a folder where you have a git pr
 git-reports --windows
 ```
 
+Example of output:
+
+![output_example](assets/report-example.png)
+
 The OS flags are:
 
 - `--windows` (or `-w`, `--win`)
