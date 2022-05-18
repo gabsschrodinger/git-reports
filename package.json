@@ -1,0 +1,22 @@
+{
+  "name": "git-reports",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/cli.js",
+  "bin": {
+    "git-reports": "bin/git-reports"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Gabriel Fernandes Ribeiro",
+  "license": "MIT",
+  "dependencies": {
+    "arg": "^5.0.1",
+    "esm": "^3.2.25"
+  }
+}
