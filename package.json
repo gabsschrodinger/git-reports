@@ -12,7 +12,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "cli",
+    "git",
+    "report"
+  ],
   "author": "Gabriel Fernandes Ribeiro",
   "license": "MIT",
   "dependencies": {
