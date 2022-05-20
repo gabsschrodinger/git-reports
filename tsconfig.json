@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist",
+    "target": "ES6",
+    "moduleResolution": "node",
+    "preserveConstEnums": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules"]
+}

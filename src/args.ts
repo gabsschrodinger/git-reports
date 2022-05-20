@@ -1,4 +1,5 @@
 import arg from "arg";
+import { Options } from "./types";
 
 const os = {
   "--macos": Boolean,
@@ -17,7 +18,7 @@ const config = {
   "--include-merges": Boolean,
 };
 
-export function parseArgs(rawArgs) {
+export function parseArgs(rawArgs: string[]): Options {
   const args = arg(
     {
       ...os,
@@ -29,7 +30,7 @@ export function parseArgs(rawArgs) {
   );
 
   return {
-    awk: args["--macos"] || false,
-    merges: args["--include-merges"] || false,
+    useAwk: args["--macos"] || false,
+    includeMerges: args["--include-merges"] || false,
   };
 }

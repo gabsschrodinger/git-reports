@@ -26,7 +26,7 @@ git-reports --windows
 
 Example of output:
 
-![output_example](assets/report-example.png)
+![output_example](https://raw.githubusercontent.com/gabsschrodinger/git-reports/main/assets/report-example.png)
 
 The OS flags are:
 
