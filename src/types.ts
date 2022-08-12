@@ -2,8 +2,9 @@ export interface Options {
   includeMerges: boolean;
 }
 
-interface GitReportEntry {
+export interface GitReportEntry {
   author: string;
+  email?: string;
   commits: number;
   "added lines": number;
   "excluded lines": number;
@@ -12,8 +13,9 @@ interface GitReportEntry {
 
 export type GitReport = GitReportEntry[];
 
-export interface GitReportOptions {
+export interface GitReportData {
   authors: string[];
+  emails: string[];
   commits: number[];
   addedLines: number[];
   excludedLines: number[];

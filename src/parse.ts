@@ -4,11 +4,12 @@ const exec = promisify(require("child_process").exec);
 
 export async function processCommits(
   authors: string[],
+  emails: string[],
   commits: number[],
   includeMerges: boolean
 ): Promise<void> {
   const commitsReport = await exec(
-    `git shortlog -s -n --all${includeMerges ? "" : " --no-merges"}`
+    `git shortlog -s -n -e --all${includeMerges ? "" : " --no-merges"}`
   );
 
   const commitsReportArr = commitsReport.stdout
@@ -20,7 +21,9 @@ export async function processCommits(
     if (/^\d+$/.test(str)) {
       commits.push(Number(str));
     } else {
-      if (commits.length > authors.length) {
+      if (/\S+@\S+\.\S+/.test(str)) {
+        emails.push(str);
+      } else if (commits.length > authors.length) {
         authors.push(str);
       } else {
         authors[authors.length - 1] = authors[authors.length - 1] + " " + str;
