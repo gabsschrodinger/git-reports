@@ -1,5 +1,6 @@
 export interface Options {
   includeMerges: boolean;
+  debugMode: boolean;
 }
 
 export interface GitReportEntry {

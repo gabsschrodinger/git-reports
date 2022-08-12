@@ -28,4 +28,9 @@ Example of output:
 
 ![output_example](https://raw.githubusercontent.com/gabsschrodinger/git-reports/main/assets/report-example.png)
 
-You can also customize the report including merge commits, which are ignored by default. To do it, use the flag `--include-merges`.
+### Customize your report
+
+You can customize your git reports including the following flags to the `git-reports` command:
+
+- `--include-merges`: Include the merge commits in the report data, which are ignored by default.
+- `--debug`: Include additional debug logs in the terminal output to help you find errors/bugs.

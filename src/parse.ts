@@ -1,4 +1,5 @@
 import { promisify } from "util";
+import { Options } from "./types";
 
 const exec = promisify(require("child_process").exec);
 
@@ -6,16 +7,17 @@ export async function processCommits(
   authors: string[],
   emails: string[],
   commits: number[],
-  includeMerges: boolean
+  { includeMerges, debugMode }: Options
 ): Promise<void> {
-  const commitsReport = await exec(
+  const { stdout: commitsReport } = await exec(
     `git shortlog -s -n -e --all${includeMerges ? "" : " --no-merges"}`
   );
 
-  const commitsReportArr = commitsReport.stdout
-    .trim()
-    .replace("'", "")
-    .split(/\s+/);
+  if (debugMode) {
+    console.log(">>> DEBUG:", commitsReport);
+  }
+
+  const commitsReportArr = commitsReport.trim().replace("'", "").split(/\s+/);
 
   commitsReportArr.forEach((str: string) => {
     if (/^\d+$/.test(str)) {
@@ -53,12 +55,17 @@ function getDeletedLinesFromUser(shortstatLog: string) {
 export async function processLines(
   authors: string[],
   addedLines: number[],
-  excludedLines: number[]
+  excludedLines: number[],
+  { debugMode }: Options
 ) {
   for (const author of authors) {
     const { stdout: shortstatLog } = await exec(
       `git log --author="${author}" --pretty=tformat: --shortstat`
     );
+
+    if (debugMode) {
+      console.log(">>> DEBUG:", shortstatLog);
+    }
 
     addedLines.push(getAddedLinesFromUser(shortstatLog));
     excludedLines.push(getDeletedLinesFromUser(shortstatLog));

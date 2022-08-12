@@ -3,6 +3,7 @@ import { Options } from "./types";
 
 const config = {
   "--include-merges": Boolean,
+  "--debug": Boolean,
 };
 
 export function parseArgs(rawArgs: string[]): Options {
@@ -12,5 +13,6 @@ export function parseArgs(rawArgs: string[]): Options {
 
   return {
     includeMerges: args["--include-merges"] || false,
+    debugMode: args["--debug"] || false,
   };
 }

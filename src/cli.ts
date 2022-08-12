@@ -10,9 +10,9 @@ export async function cli(args: string[]): Promise<void> {
   const addedLines: number[] = [];
   const excludedLines: number[] = [];
 
-  await processCommits(authors, emails, commits, options.includeMerges);
+  await processCommits(authors, emails, commits, options);
 
-  await processLines(authors, addedLines, excludedLines);
+  await processLines(authors, addedLines, excludedLines, options);
 
   console.table(
     generateReport({
