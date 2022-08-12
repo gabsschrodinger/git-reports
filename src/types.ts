@@ -1,15 +1,6 @@
 export interface Options {
-  useAwk: boolean;
   includeMerges: boolean;
 }
-
-export enum OperationalSystems {
-  MAC = "macos",
-  WINDOWS = "windows",
-  LINUX = "linux",
-}
-
-export type OperationalSystem = `${OperationalSystems}`;
 
 export interface GitReportEntry {
   author: string;

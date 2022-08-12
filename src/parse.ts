@@ -8,8 +8,9 @@ export async function processCommits(
   includeMerges: boolean
 ): Promise<void> {
   const commitsReport = await exec(
-    `git shortlog -s -n --all ${includeMerges ? "" : "--no-merges"}`
+    `git shortlog -s -n --all${includeMerges ? "" : " --no-merges"}`
   );
+
   const commitsReportArr = commitsReport.stdout
     .trim()
     .replace("'", "")
@@ -28,28 +29,35 @@ export async function processCommits(
   });
 }
 
+function getAddedLinesFromUser(shortstatLog: string) {
+  const addedLinesRegex = /\d+(?=\s+insertion)/g;
+
+  return shortstatLog
+    .match(addedLinesRegex)
+    .map((addedLines) => Number(addedLines))
+    .reduce((sum, addedLines) => sum + addedLines, 0);
+}
+
+function getDeletedLinesFromUser(shortstatLog: string) {
+  const deletedLinesRegex = /\d+(?=\s+deletion)/g;
+
+  return shortstatLog
+    .match(deletedLinesRegex)
+    .map((deletedLines) => Number(deletedLines))
+    .reduce((sum, deletedLines) => sum + deletedLines, 0);
+}
+
 export async function processLines(
   authors: string[],
   addedLines: number[],
-  excludedLines: number[],
-  awk: boolean
+  excludedLines: number[]
 ) {
   for (const author of authors) {
-    const linesReport = await exec(
-      `git log --author="${author}" --pretty=tformat: --numstat | ${
-        awk ? "awk" : "gawk"
-      } '{ added += $1; excluded += $2 } END { printf "%s %s", added, excluded }' -`
+    const { stdout: shortstatLog } = await exec(
+      `git log --author="${author}" --pretty=tformat: --shortstat`
     );
-    const linesArr = [];
 
-    const linesReportArr = linesReport.stdout.trim().split(/\s+/);
-    linesReportArr.forEach((str: string) => {
-      if (/^\d+$/.test(str)) {
-        linesArr.push(str);
-      }
-    });
-
-    addedLines.push(Number(linesArr[0]));
-    excludedLines.push(Number(linesArr[1]));
+    addedLines.push(getAddedLinesFromUser(shortstatLog));
+    excludedLines.push(getDeletedLinesFromUser(shortstatLog));
   }
 }

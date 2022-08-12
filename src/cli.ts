@@ -12,7 +12,7 @@ export async function cli(args: string[]): Promise<void> {
 
   await processCommits(authors, commits, options.includeMerges);
 
-  await processLines(authors, addedLines, excludedLines, options.useAwk);
+  await processLines(authors, addedLines, excludedLines);
 
   const report: GitReport = generateReport({
     authors,
