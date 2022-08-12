@@ -1,6 +1,6 @@
-import { GitReportEntry, GitReportOptions } from "./types";
+import { GitReport, GitReportOptions } from "./types";
 
-export const generateReport = (options: GitReportOptions): GitReportEntry[] => {
+export const generateReport = (options: GitReportOptions): GitReport => {
   const { authors, commits, addedLines, excludedLines } = options;
   const table = [];
 

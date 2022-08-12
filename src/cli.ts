@@ -1,7 +1,6 @@
 import { parseArgs } from "./args";
 import { processCommits, processLines } from "./parse";
 import { generateReport } from "./report";
-import { GitReport } from "./types";
 
 export async function cli(args: string[]): Promise<void> {
   const options = parseArgs(args);
@@ -14,12 +13,12 @@ export async function cli(args: string[]): Promise<void> {
 
   await processLines(authors, addedLines, excludedLines);
 
-  const report: GitReport = generateReport({
-    authors,
-    commits,
-    addedLines,
-    excludedLines,
-  });
-
-  console.table(report);
+  console.table(
+    generateReport({
+      authors,
+      commits,
+      addedLines,
+      excludedLines,
+    })
+  );
 }

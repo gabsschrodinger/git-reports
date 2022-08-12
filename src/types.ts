@@ -2,7 +2,7 @@ export interface Options {
   includeMerges: boolean;
 }
 
-export interface GitReportEntry {
+interface GitReportEntry {
   author: string;
   commits: number;
   "added lines": number;
