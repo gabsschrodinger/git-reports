@@ -5,6 +5,7 @@
     "target": "ES6",
     "moduleResolution": "node",
     "preserveConstEnums": true,
+    "removeComments": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true
   },

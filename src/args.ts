@@ -1,12 +1,14 @@
 import arg from "arg";
 import { Options } from "./types";
 
-const os = {
+const config = {
+  // os
   "--macos": Boolean,
   "--windows": Boolean,
   "--linux": "--macos",
+  "--include-merges": Boolean,
 
-  // aliases
+  // os aliases
   "-m": "--macos",
   "--mac": "--macos",
   "-w": "--windows",
@@ -14,20 +16,10 @@ const os = {
   "-l": "--macos",
 };
 
-const config = {
-  "--include-merges": Boolean,
-};
-
 export function parseArgs(rawArgs: string[]): Options {
-  const args = arg(
-    {
-      ...os,
-      ...config,
-    },
-    {
-      argv: rawArgs.slice(2),
-    }
-  );
+  const args = arg(config, {
+    argv: rawArgs.slice(2),
+  });
 
   return {
     useAwk: args["--macos"] || false,
