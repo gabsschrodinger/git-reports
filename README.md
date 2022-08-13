@@ -36,3 +36,4 @@ You can customize your git reports including the following flags to the `git-rep
 - `--debug`: Include additional debug logs in the terminal output to help you find errors/bugs.
 - `--order-by`: Sort the report by the specified field. Value must be a report field ("author", "email", "commits", "added lines", "excluded lines" or "total lines"). Default value: "commits".
 - `--order`: Sort the report by either ascending order or descending order. Possible values: "ASC" or "DESC". Default value: "DESC".
+- `--group-by-name`: Group authors by their names.
