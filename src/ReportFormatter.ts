@@ -4,85 +4,18 @@ import {
   GitReportEntry,
   GitReportOptions,
 } from "./types";
+import { groupUsersBy } from "./utils";
 
 export class ReportFormatter {
-  public report: GitReport = [];
-  private options: GitReportOptions;
+  private report: GitReport = [];
+  private readonly options: GitReportOptions;
 
   constructor(options: GitReportOptions) {
     this.options = options;
   }
 
-  private getGitReportEntriesByEmail(email: string) {
-    return this.report.filter((entry) => entry.email === email);
-  }
-
-  private groupUsersByEmail(emails: string[]) {
-    const emailsCopy = [...emails];
-
-    while (emailsCopy.length) {
-      const removedEmail = emailsCopy.shift();
-
-      if (emailsCopy.includes(removedEmail)) {
-        const sameEmailEntries = this.getGitReportEntriesByEmail(removedEmail);
-        const reducedEntry = sameEmailEntries.reduce(
-          (reducedEntry, newEntry) => ({
-            author: reducedEntry.author,
-            email: reducedEntry.email,
-            commits: reducedEntry.commits + newEntry.commits,
-            "added lines":
-              reducedEntry["added lines"] + newEntry["added lines"],
-            "excluded lines":
-              reducedEntry["excluded lines"] + newEntry["excluded lines"],
-            "total lines":
-              reducedEntry["total lines"] + newEntry["total lines"],
-          }),
-          { ...sameEmailEntries[0] }
-        );
-
-        const filteredReport = this.report.filter(
-          (entry) => entry.email !== removedEmail
-        );
-        filteredReport.push(reducedEntry);
-
-        this.report = filteredReport;
-      }
-    }
-  }
-
-  private groupUsersByName() {
-    const namesCopy = [...this.report.map((entry) => entry.author)];
-
-    while (namesCopy.length) {
-      const removedName = namesCopy.shift();
-
-      if (namesCopy.includes(removedName)) {
-        const sameNameEntries = this.report.filter(
-          (entry) => entry.author === removedName
-        );
-        const reducedEntry = sameNameEntries.reduce(
-          (reducedEntry, newEntry) => ({
-            author: reducedEntry.author,
-            email: reducedEntry.email,
-            commits: reducedEntry.commits + newEntry.commits,
-            "added lines":
-              reducedEntry["added lines"] + newEntry["added lines"],
-            "excluded lines":
-              reducedEntry["excluded lines"] + newEntry["excluded lines"],
-            "total lines":
-              reducedEntry["total lines"] + newEntry["total lines"],
-          }),
-          { ...sameNameEntries[0] }
-        );
-
-        const filteredReport = this.report.filter(
-          (entry) => entry.author !== removedName
-        );
-        filteredReport.push(reducedEntry);
-
-        this.report = filteredReport;
-      }
-    }
+  private groupUsersByEmail() {
+    this.report = groupUsersBy("email")(this.report);
   }
 
   private removeEmailsFromReport() {
@@ -138,17 +71,14 @@ export class ReportFormatter {
       this.report.push(entry);
     }
 
-    this.groupUsersByEmail(emails);
+    this.groupUsersByEmail();
 
-    if (this.options.groupByName) {
-      this.groupUsersByName();
-    }
+    this.sortReport();
 
     if (!this.options.includeEmail) {
       this.removeEmailsFromReport();
     }
 
-    this.sortReport();
     return this.report;
   }
 }

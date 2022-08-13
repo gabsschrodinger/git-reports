@@ -1,6 +1,7 @@
 import { exec } from "./terminal";
 import { GitReportOptions } from "./types";
 import { ReportFormatter } from "./ReportFormatter";
+import { groupUsersBy } from "./utils";
 
 export class GitReport {
   public authors: string[] = [];
@@ -8,8 +9,8 @@ export class GitReport {
   public commits: number[] = [];
   public addedLines: number[] = [];
   public excludedLines: number[] = [];
-  public options: GitReportOptions;
-  private reportFormatter: ReportFormatter;
+  private readonly options: GitReportOptions;
+  private readonly reportFormatter: ReportFormatter;
 
   constructor(options: GitReportOptions) {
     this.options = options;
@@ -43,6 +44,21 @@ export class GitReport {
         }
       }
     });
+
+    const groupedEntries = groupUsersBy("author")(
+      this.authors.map((author, index) => ({
+        author,
+        email: this.emails[index],
+        commits: this.commits[index],
+        "added lines": 0,
+        "excluded lines": 0,
+        "total lines": 0,
+      }))
+    );
+
+    this.authors = groupedEntries.map((entry) => entry.author);
+    this.emails = groupedEntries.map((entry) => entry.email);
+    this.commits = groupedEntries.map((entry) => entry.commits);
   }
 
   private getAddedLinesFromUser(shortstatLog: string) {

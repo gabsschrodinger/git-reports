@@ -4,7 +4,6 @@ export interface GitReportOptions {
   debugMode: boolean;
   orderBy: keyof GitReportEntry;
   order: "ASC" | "DESC";
-  groupByName: boolean;
 }
 
 export interface GitReportEntry {

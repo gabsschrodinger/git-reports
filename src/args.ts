@@ -5,7 +5,6 @@ const config = {
   "--include-merges": Boolean,
   "--include-email": Boolean,
   "--debug": Boolean,
-  "--group-by-name": Boolean,
   "--order-by": String,
   "--order": String,
 };
@@ -50,7 +49,6 @@ export function parseArgs(rawArgs: string[]): GitReportOptions {
     includeMerges: args["--include-merges"] || false,
     includeEmail: args["--include-email"] || false,
     debugMode: args["--debug"] || false,
-    groupByName: args["--group-by-name"] || false,
     orderBy: getOrderByValue(args),
     order: getOrderValue(args),
   };
