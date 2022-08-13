@@ -39,7 +39,7 @@ function getAddedLinesFromUser(shortstatLog: string) {
 
   return shortstatLog
     .match(addedLinesRegex)
-    .map((addedLines) => Number(addedLines))
+    .map((addedLines) => (addedLines ? Number(addedLines) : 0))
     .reduce((sum, addedLines) => sum + addedLines, 0);
 }
 
@@ -48,7 +48,7 @@ function getDeletedLinesFromUser(shortstatLog: string) {
 
   return shortstatLog
     .match(deletedLinesRegex)
-    .map((deletedLines) => Number(deletedLines))
+    .map((deletedLines) => (deletedLines ? Number(deletedLines) : 0))
     .reduce((sum, deletedLines) => sum + deletedLines, 0);
 }
 
