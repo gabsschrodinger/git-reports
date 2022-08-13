@@ -17,7 +17,7 @@ export class ReportFormatter {
     return this.report.filter((entry) => entry.email === email);
   }
 
-  private joinUsersWithSameEmail(emails: string[]) {
+  private groupUsersByEmail(emails: string[]) {
     const emailsCopy = [...emails];
 
     while (emailsCopy.length) {
@@ -42,6 +42,41 @@ export class ReportFormatter {
 
         const filteredReport = this.report.filter(
           (entry) => entry.email !== removedEmail
+        );
+        filteredReport.push(reducedEntry);
+
+        this.report = filteredReport;
+      }
+    }
+  }
+
+  private groupUsersByName() {
+    const namesCopy = [...this.report.map((entry) => entry.author)];
+
+    while (namesCopy.length) {
+      const removedName = namesCopy.shift();
+
+      if (namesCopy.includes(removedName)) {
+        const sameNameEntries = this.report.filter(
+          (entry) => entry.author === removedName
+        );
+        const reducedEntry = sameNameEntries.reduce(
+          (reducedEntry, newEntry) => ({
+            author: reducedEntry.author,
+            email: reducedEntry.email,
+            commits: reducedEntry.commits + newEntry.commits,
+            "added lines":
+              reducedEntry["added lines"] + newEntry["added lines"],
+            "excluded lines":
+              reducedEntry["excluded lines"] + newEntry["excluded lines"],
+            "total lines":
+              reducedEntry["total lines"] + newEntry["total lines"],
+          }),
+          { ...sameNameEntries[0] }
+        );
+
+        const filteredReport = this.report.filter(
+          (entry) => entry.author !== removedName
         );
         filteredReport.push(reducedEntry);
 
@@ -104,8 +139,11 @@ export class ReportFormatter {
     }
 
     this.sortReport();
+    this.groupUsersByEmail(emails);
 
-    this.joinUsersWithSameEmail(emails);
+    if (this.options.groupByName) {
+      this.groupUsersByName();
+    }
 
     if (!this.options.includeEmail) {
       this.removeEmailsFromReport();
