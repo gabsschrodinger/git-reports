@@ -1,5 +1,6 @@
-import { exec } from "./parse";
+import { exec } from "./utils";
 import { GitReportOptions } from "./types";
+import { ReportFormatter } from "./ReportFormatter";
 
 export class GitReport {
   public authors: string[] = [];
@@ -8,6 +9,7 @@ export class GitReport {
   public addedLines: number[] = [];
   public excludedLines: number[] = [];
   public options: GitReportOptions;
+  private reportFormatter = new ReportFormatter();
 
   constructor(options: GitReportOptions) {
     this.options = options;
@@ -40,5 +42,42 @@ export class GitReport {
         }
       }
     });
+  }
+
+  private getAddedLinesFromUser(shortstatLog: string) {
+    const addedLinesRegex = /\d+(?=\s+insertion)/g;
+
+    return shortstatLog
+      .match(addedLinesRegex)
+      .map((addedLines) => Number(addedLines))
+      .reduce((sum, addedLines) => sum + addedLines, 0);
+  }
+
+  private getDeletedLinesFromUser(shortstatLog: string) {
+    const deletedLinesRegex = /\d+(?=\s+deletion)/g;
+
+    return shortstatLog
+      .match(deletedLinesRegex)
+      .map((deletedLines) => Number(deletedLines))
+      .reduce((sum, deletedLines) => sum + deletedLines, 0);
+  }
+
+  async processLines() {
+    for (const author of this.authors) {
+      const { stdout: shortstatLog } = await exec(
+        `git log --author="${author}" --pretty=tformat: --shortstat`
+      );
+
+      if (this.options.debugMode) {
+        console.log(">>> DEBUG:", shortstatLog);
+      }
+
+      this.addedLines.push(this.getAddedLinesFromUser(shortstatLog));
+      this.excludedLines.push(this.getDeletedLinesFromUser(shortstatLog));
+    }
+  }
+
+  getReport() {
+    return this.reportFormatter.generateReport(this);
   }
 }
