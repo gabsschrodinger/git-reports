@@ -56,6 +56,33 @@ export class ReportFormatter {
     });
   }
 
+  private sortReport() {
+    this.report = this.report.sort((a, b) => {
+      const firstValue = a[this.options.orderBy];
+      const secondValue = b[this.options.orderBy];
+      if (typeof firstValue === "number" && typeof secondValue === "number") {
+        if (this.options.order === "ASC") {
+          return firstValue - secondValue;
+        } else {
+          return secondValue - firstValue;
+        }
+      } else if (
+        typeof firstValue === "string" &&
+        typeof secondValue === "string"
+      ) {
+        if (this.options.order === "ASC") {
+          if (firstValue < secondValue) {
+            return -1;
+          } else if (firstValue > secondValue) {
+            return 1;
+          }
+
+          return 0;
+        }
+      }
+    });
+  }
+
   generateReport({
     authors,
     emails,
@@ -76,12 +103,14 @@ export class ReportFormatter {
       this.report.push(entry);
     }
 
+    this.sortReport();
+
     this.joinUsersWithSameEmail(emails);
 
     if (!this.options.includeEmail) {
       this.removeEmailsFromReport();
     }
 
-    return this.report.sort((a, b) => b.commits - a.commits);
+    return this.report;
   }
 }

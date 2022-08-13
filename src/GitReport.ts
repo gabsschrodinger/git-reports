@@ -1,4 +1,4 @@
-import { exec } from "./utils";
+import { exec } from "./terminal";
 import { GitReportOptions } from "./types";
 import { ReportFormatter } from "./ReportFormatter";
 
