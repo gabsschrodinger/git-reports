@@ -45,21 +45,37 @@ export class GitReport {
   }
 
   private getAddedLinesFromUser(shortstatLog: string) {
-    const addedLinesRegex = /\d+(?=\s+insertion)/g;
+    try {
+      const addedLinesRegex = /\d+(?=\s+insertion)/g;
 
-    return shortstatLog
-      .match(addedLinesRegex)
-      .map((addedLines) => Number(addedLines))
-      .reduce((sum, addedLines) => sum + addedLines, 0);
+      return shortstatLog
+        .match(addedLinesRegex)
+        .map((addedLines) => Number(addedLines))
+        .reduce((sum, addedLines) => sum + addedLines, 0);
+    } catch (error) {
+      if (this.options.debugMode) {
+        console.log(">>> DEBUG:", { error });
+      }
+
+      return 0;
+    }
   }
 
   private getDeletedLinesFromUser(shortstatLog: string) {
-    const deletedLinesRegex = /\d+(?=\s+deletion)/g;
+    try {
+      const deletedLinesRegex = /\d+(?=\s+deletion)/g;
 
-    return shortstatLog
-      .match(deletedLinesRegex)
-      .map((deletedLines) => Number(deletedLines))
-      .reduce((sum, deletedLines) => sum + deletedLines, 0);
+      return shortstatLog
+        .match(deletedLinesRegex)
+        .map((deletedLines) => Number(deletedLines))
+        .reduce((sum, deletedLines) => sum + deletedLines, 0);
+    } catch (error) {
+      if (this.options.debugMode) {
+        console.log(">>> DEBUG:", { error });
+      }
+
+      return 0;
+    }
   }
 
   async processLines() {
