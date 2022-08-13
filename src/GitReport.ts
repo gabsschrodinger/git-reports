@@ -9,10 +9,11 @@ export class GitReport {
   public addedLines: number[] = [];
   public excludedLines: number[] = [];
   public options: GitReportOptions;
-  private reportFormatter = new ReportFormatter();
+  private reportFormatter: ReportFormatter;
 
   constructor(options: GitReportOptions) {
     this.options = options;
+    this.reportFormatter = new ReportFormatter(options);
   }
 
   async processCommits(): Promise<void> {

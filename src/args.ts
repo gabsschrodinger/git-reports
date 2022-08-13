@@ -3,6 +3,7 @@ import { GitReportOptions } from "./types";
 
 const config = {
   "--include-merges": Boolean,
+  "--include-email": Boolean,
   "--debug": Boolean,
 };
 
@@ -13,6 +14,7 @@ export function parseArgs(rawArgs: string[]): GitReportOptions {
 
   return {
     includeMerges: args["--include-merges"] || false,
+    includeEmail: args["--include-email"] || false,
     debugMode: args["--debug"] || false,
   };
 }

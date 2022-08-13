@@ -1,7 +1,17 @@
-import { GitReport, GitReportData, GitReportEntry } from "./types";
+import {
+  GitReport,
+  GitReportData,
+  GitReportEntry,
+  GitReportOptions,
+} from "./types";
 
 export class ReportFormatter {
   public report: GitReport = [];
+  private options: GitReportOptions;
+
+  constructor(options: GitReportOptions) {
+    this.options = options;
+  }
 
   private getGitReportEntriesByEmail(email: string) {
     return this.report.filter((entry) => entry.email === email);
@@ -40,6 +50,12 @@ export class ReportFormatter {
     }
   }
 
+  private removeEmailsFromReport() {
+    this.report.forEach((entry) => {
+      delete entry.email;
+    });
+  }
+
   generateReport({
     authors,
     emails,
@@ -62,6 +78,10 @@ export class ReportFormatter {
 
     this.joinUsersWithSameEmail(emails);
 
-    return this.report.sort((a, b) => a.commits - b.commits);
+    if (!this.options.includeEmail) {
+      this.removeEmailsFromReport();
+    }
+
+    return this.report.sort((a, b) => b.commits - a.commits);
   }
 }

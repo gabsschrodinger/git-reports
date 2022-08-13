@@ -1,5 +1,6 @@
 export interface GitReportOptions {
   includeMerges: boolean;
+  includeEmail: boolean;
   debugMode: boolean;
 }
 
