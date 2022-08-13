@@ -138,7 +138,6 @@ export class ReportFormatter {
       this.report.push(entry);
     }
 
-    this.sortReport();
     this.groupUsersByEmail(emails);
 
     if (this.options.groupByName) {
@@ -149,6 +148,7 @@ export class ReportFormatter {
       this.removeEmailsFromReport();
     }
 
+    this.sortReport();
     return this.report;
   }
 }
