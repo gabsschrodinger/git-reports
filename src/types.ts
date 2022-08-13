@@ -1,4 +1,4 @@
-export interface Options {
+export interface GitReportOptions {
   includeMerges: boolean;
   debugMode: boolean;
 }

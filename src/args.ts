@@ -1,12 +1,12 @@
 import arg from "arg";
-import { Options } from "./types";
+import { GitReportOptions } from "./types";
 
 const config = {
   "--include-merges": Boolean,
   "--debug": Boolean,
 };
 
-export function parseArgs(rawArgs: string[]): Options {
+export function parseArgs(rawArgs: string[]): GitReportOptions {
   const args = arg(config, {
     argv: rawArgs.slice(2),
   });
