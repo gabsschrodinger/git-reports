@@ -1,14 +1,23 @@
+export enum Order {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
+export function isOrder(value: string): value is Order {
+  return value === Order.ASC || value === Order.DESC;
+}
+
 export interface GitReportOptions {
   includeMerges: boolean;
   includeEmail: boolean;
   debugMode: boolean;
   orderBy: keyof GitReportEntry;
-  order: "ASC" | "DESC";
+  order: Order;
 }
 
 export interface GitReportEntry {
   author: string;
-  email?: string;
+  email: string;
   commits: number;
   "added lines": number;
   "excluded lines": number;
@@ -30,7 +39,7 @@ export function isGitReportEntryKey(
   return gitReportEntryKeys.includes(value);
 }
 
-export type GitReport = GitReportEntry[];
+export type GitReport = Partial<GitReportEntry>[];
 
 export interface GitReportData {
   authors: string[];

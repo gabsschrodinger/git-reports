@@ -1,3 +1,4 @@
 import { promisify } from "util";
+import { exec } from "child_process";
 
-export const exec = promisify(require("child_process").exec);
+export const execTerminalCommand = promisify(exec);

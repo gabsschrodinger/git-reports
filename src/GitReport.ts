@@ -1,4 +1,4 @@
-import { exec } from "./terminal";
+import { execTerminalCommand } from "./terminal";
 import { GitReportOptions } from "./types";
 import { ReportFormatter } from "./ReportFormatter";
 import { groupUsersBy } from "./utils";
@@ -18,7 +18,7 @@ export class GitReport {
   }
 
   async processCommits(): Promise<void> {
-    const { stdout: commitsReport } = await exec(
+    const { stdout: commitsReport } = await execTerminalCommand(
       `git shortlog -s -n -e --all${
         this.options.includeMerges ? "" : " --no-merges"
       }`
@@ -65,8 +65,13 @@ export class GitReport {
     try {
       const addedLinesRegex = /\d+(?=\s+insertion)/g;
 
-      return shortstatLog
-        .match(addedLinesRegex)
+      const addedLinesCollection = shortstatLog.match(addedLinesRegex);
+
+      if (!addedLinesCollection) {
+        return 0;
+      }
+
+      return addedLinesCollection
         .map((addedLines) => Number(addedLines))
         .reduce((sum, addedLines) => sum + addedLines, 0);
     } catch (error) {
@@ -82,8 +87,13 @@ export class GitReport {
     try {
       const deletedLinesRegex = /\d+(?=\s+deletion)/g;
 
-      return shortstatLog
-        .match(deletedLinesRegex)
+      const deletedLinesCollection = shortstatLog.match(deletedLinesRegex);
+
+      if (!deletedLinesCollection) {
+        return 0;
+      }
+
+      return deletedLinesCollection
         .map((deletedLines) => Number(deletedLines))
         .reduce((sum, deletedLines) => sum + deletedLines, 0);
     } catch (error) {
@@ -97,7 +107,7 @@ export class GitReport {
 
   async processLines() {
     for (const author of this.authors) {
-      const { stdout: shortstatLog } = await exec(
+      const { stdout: shortstatLog } = await execTerminalCommand(
         `git log --author="${author}" --pretty=tformat: --shortstat`
       );
 

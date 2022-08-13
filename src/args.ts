@@ -1,5 +1,5 @@
 import arg from "arg";
-import { GitReportEntry, GitReportOptions, isGitReportEntryKey } from "./types";
+import { GitReportEntry, GitReportOptions, isGitReportEntryKey, isOrder, Order } from "./types";
 
 const config = {
   "--include-merges": Boolean,
@@ -25,18 +25,20 @@ function getOrderByValue(args: ReturnType<typeof arg<typeof config>>): keyof Git
   return "commits"
 }
 
-function getOrderValue(args: ReturnType<typeof arg<typeof config>>): 'ASC' | 'DESC' {
+function getOrderValue(args: ReturnType<typeof arg<typeof config>>): Order {
   const order = args["--order"]
 
   if (!order) {
-    return "DESC"
+    return Order.DESC
   }
 
-  if (order === 'ASC' || order === 'DESC') {
+  if (isOrder(order)) {
     return order
   }
 
   console.error("Invalid value for [--order] flag, git-reports is going its default value ('DESC')")
+
+  return Order.DESC
 }
 
 export function parseArgs(rawArgs: string[]): GitReportOptions {

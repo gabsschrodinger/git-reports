@@ -4,10 +4,10 @@ import {
   GitReportEntry,
   GitReportOptions,
 } from "./types";
-import { groupUsersBy } from "./utils";
+import { groupUsersBy, sortReportBy } from "./utils";
 
 export class ReportFormatter {
-  private report: GitReport = [];
+  private reportEntries: GitReportEntry[] = [];
   private readonly options: GitReportOptions;
 
   constructor(options: GitReportOptions) {
@@ -15,40 +15,23 @@ export class ReportFormatter {
   }
 
   private groupUsersByEmail() {
-    this.report = groupUsersBy("email")(this.report);
+    this.reportEntries = groupUsersBy("email")(this.reportEntries);
   }
 
-  private removeEmailsFromReport() {
-    this.report.forEach((entry) => {
-      delete entry.email;
+  private getReportWithoutEmail() {
+    return this.reportEntries.map((entry) => {
+      const newEntry: Partial<GitReportEntry> = { ...entry };
+      delete newEntry.email;
+
+      return newEntry;
     });
   }
 
   private sortReport() {
-    this.report = this.report.sort((a, b) => {
-      const firstValue = a[this.options.orderBy];
-      const secondValue = b[this.options.orderBy];
-      if (typeof firstValue === "number" && typeof secondValue === "number") {
-        if (this.options.order === "ASC") {
-          return firstValue - secondValue;
-        } else {
-          return secondValue - firstValue;
-        }
-      } else if (
-        typeof firstValue === "string" &&
-        typeof secondValue === "string"
-      ) {
-        if (this.options.order === "ASC") {
-          if (firstValue < secondValue) {
-            return -1;
-          } else if (firstValue > secondValue) {
-            return 1;
-          }
-
-          return 0;
-        }
-      }
-    });
+    this.reportEntries = sortReportBy(
+      this.options.orderBy,
+      this.options.order
+    )(this.reportEntries);
   }
 
   generateReport({
@@ -68,7 +51,7 @@ export class ReportFormatter {
         "total lines": Number(addedLines[i]) + Number(excludedLines[i]),
       };
 
-      this.report.push(entry);
+      this.reportEntries.push(entry);
     }
 
     this.groupUsersByEmail();
@@ -76,9 +59,9 @@ export class ReportFormatter {
     this.sortReport();
 
     if (!this.options.includeEmail) {
-      this.removeEmailsFromReport();
+      return this.getReportWithoutEmail();
     }
 
-    return this.report;
+    return this.reportEntries;
   }
 }
