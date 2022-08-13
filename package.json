@@ -1,6 +1,6 @@
 {
   "name": "git-reports",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Generate reports about git authors, commits and modified lines",
   "main": "src/cli.js",
   "bin": {
