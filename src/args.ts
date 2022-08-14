@@ -15,42 +15,37 @@ const config = {
   '--order': String,
 }
 
+function getArgValue<T>(
+  argKey: keyof typeof config,
+  args: ReturnType<typeof arg<typeof config>>,
+  defaultValue: T,
+  validateType: (value: any) => value is T
+) {
+  const argValue = args[argKey]
+
+  if (!argValue) {
+    return defaultValue
+  }
+
+  if (validateType(argValue)) {
+    return argValue
+  }
+
+  console.error(
+    `Invalid value for [${argKey}] flag, git-reports is going its default value ('${defaultValue}')`
+  )
+
+  return defaultValue
+}
+
 function getOrderByValue(
   args: ReturnType<typeof arg<typeof config>>
 ): keyof GitReportEntry {
-  const orderBy = args['--order-by']
-
-  if (!orderBy) {
-    return 'commits'
-  }
-
-  if (isGitReportEntryKey(orderBy)) {
-    return orderBy
-  }
-
-  console.error(
-    "Invalid value for [--order-by] flag, git-reports is going its default value ('commits')"
-  )
-
-  return 'commits'
+  return getArgValue('--order-by', args, 'commits', isGitReportEntryKey)
 }
 
 function getOrderValue(args: ReturnType<typeof arg<typeof config>>): Order {
-  const order = args['--order']
-
-  if (!order) {
-    return Order.DESC
-  }
-
-  if (isOrder(order)) {
-    return order
-  }
-
-  console.error(
-    "Invalid value for [--order] flag, git-reports is going its default value ('DESC')"
-  )
-
-  return Order.DESC
+  return getArgValue('--order', args, Order.DESC, isOrder)
 }
 
 export function parseArgs(rawArgs: string[]): GitReportOptions {
