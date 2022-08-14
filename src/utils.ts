@@ -41,58 +41,55 @@ export function groupUsersBy(field: keyof GitReportEntry) {
   }
 }
 
-const sortAscNumber = (firstValue: number, secondValue: number): number => {
-  return firstValue - secondValue
-}
+function sortNumbericValue(
+  firstValue: number,
+  secondValue: number,
+  order: Order
+) {
+  const diff = firstValue - secondValue
 
-const sortDescNumber = (firstValue: number, secondValue: number): number => {
-  return secondValue - firstValue
-}
-
-const sortAscString = (firstValue: string, secondValue: string): number => {
-  if (firstValue < secondValue) {
-    return -1
+  if (order === Order.ASC) {
+    return diff
   }
 
-  if (firstValue > secondValue) {
-    return 1
-  }
-
-  return 0
+  return -diff
 }
 
-const sortDescString = (firstValue: string, secondValue: string): number => {
-  if (firstValue < secondValue) {
-    return 1
+function sortStringValue(
+  firstValue: string,
+  secondValue: string,
+  order: Order
+): number {
+  if (firstValue === secondValue) {
+    return 0
   }
 
-  if (firstValue > secondValue) {
-    return -1
+  const firstIsGreater = firstValue > secondValue
+
+  if (order === Order.ASC) {
+    return +firstIsGreater
   }
 
-  return 0
+  return -firstIsGreater
 }
+
+function isType<T>(type: string) {
+  return (value: any): value is T => typeof value === type
+}
+
+const isString = isType<string>('string')
+const isNumber = isType<number>('number')
 
 export function sortReportBy(field: keyof GitReportEntry, order: Order) {
   return function (report: GitReportEntry[]) {
     return report.sort((a, b) => {
       const firstValue = a[field]
       const secondValue = b[field]
-      if (typeof firstValue === 'number' && typeof secondValue === 'number') {
-        if (order === 'ASC') {
-          return sortAscNumber(firstValue, secondValue)
-        } else {
-          return sortDescNumber(firstValue, secondValue)
-        }
-      } else if (
-        typeof firstValue === 'string' &&
-        typeof secondValue === 'string'
-      ) {
-        if (order === 'ASC') {
-          return sortAscString(firstValue, secondValue)
-        } else {
-          return sortDescString(firstValue, secondValue)
-        }
+
+      if (isNumber(firstValue) && isNumber(secondValue)) {
+        return sortNumbericValue(firstValue, secondValue, order)
+      } else if (isString(firstValue) && isString(secondValue)) {
+        return sortStringValue(firstValue, secondValue, order)
       }
 
       return 0
