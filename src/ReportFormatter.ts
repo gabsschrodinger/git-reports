@@ -3,35 +3,35 @@ import {
   GitReportData,
   GitReportEntry,
   GitReportOptions,
-} from "./types";
-import { groupUsersBy, sortReportBy } from "./utils";
+} from './types'
+import { groupUsersBy, sortReportBy } from './utils'
 
 export class ReportFormatter {
-  private reportEntries: GitReportEntry[] = [];
-  private readonly options: GitReportOptions;
+  private reportEntries: GitReportEntry[] = []
+  private readonly options: GitReportOptions
 
   constructor(options: GitReportOptions) {
-    this.options = options;
+    this.options = options
   }
 
   private groupUsersByEmail() {
-    this.reportEntries = groupUsersBy("email")(this.reportEntries);
+    this.reportEntries = groupUsersBy('email')(this.reportEntries)
   }
 
   private getReportWithoutEmail() {
     return this.reportEntries.map((entry) => {
-      const newEntry: Partial<GitReportEntry> = { ...entry };
-      delete newEntry.email;
+      const newEntry: Partial<GitReportEntry> = { ...entry }
+      delete newEntry.email
 
-      return newEntry;
-    });
+      return newEntry
+    })
   }
 
   private sortReport() {
     this.reportEntries = sortReportBy(
       this.options.orderBy,
       this.options.order
-    )(this.reportEntries);
+    )(this.reportEntries)
   }
 
   generateReport({
@@ -46,22 +46,22 @@ export class ReportFormatter {
         author: authors[i],
         email: emails[i],
         commits: commits[i],
-        "added lines": addedLines[i],
-        "excluded lines": excludedLines[i],
-        "total lines": Number(addedLines[i]) + Number(excludedLines[i]),
-      };
+        'added lines': addedLines[i],
+        'excluded lines': excludedLines[i],
+        'total lines': Number(addedLines[i]) + Number(excludedLines[i]),
+      }
 
-      this.reportEntries.push(entry);
+      this.reportEntries.push(entry)
     }
 
-    this.groupUsersByEmail();
+    this.groupUsersByEmail()
 
-    this.sortReport();
+    this.sortReport()
 
     if (!this.options.includeEmail) {
-      return this.getReportWithoutEmail();
+      return this.getReportWithoutEmail()
     }
 
-    return this.reportEntries;
+    return this.reportEntries
   }
 }
