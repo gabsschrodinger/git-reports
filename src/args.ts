@@ -20,7 +20,7 @@ function getArgValue<T>(
   args: ReturnType<typeof arg<typeof config>>,
   defaultValue: T,
   validateType: (value: any) => value is T
-) {
+): T {
   const argValue = args[argKey]
 
   if (!argValue) {

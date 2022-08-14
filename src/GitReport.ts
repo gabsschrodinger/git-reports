@@ -1,4 +1,4 @@
-import { execTerminalCommand } from './terminal'
+import { TerminalService } from './TerminalService'
 import { GitReportOptions } from './types'
 import { ReportFormatter } from './ReportFormatter'
 import { groupUsersBy } from './utils'
@@ -11,24 +11,22 @@ export class GitReport {
   public excludedLines: number[] = []
   private readonly options: GitReportOptions
   private readonly reportFormatter: ReportFormatter
+  private readonly terminalService: TerminalService
 
   constructor(options: GitReportOptions) {
     this.options = options
     this.reportFormatter = new ReportFormatter(options)
+    this.terminalService = new TerminalService(options)
   }
 
   async processCommits(): Promise<void> {
-    const { stdout: commitsReport } = await execTerminalCommand(
-      `git shortlog -s -n -e --all${
-        this.options.includeMerges ? '' : ' --no-merges'
-      }`
-    )
+    const gitShortlog = await this.terminalService.getGitShortlog()
 
     if (this.options.debugMode) {
-      console.log('>>> DEBUG:', commitsReport)
+      console.log('>>> DEBUG:', gitShortlog)
     }
 
-    const commitsReportArr = commitsReport.trim().replace("'", '').split(/\s+/)
+    const commitsReportArr = gitShortlog.trim().replace("'", '').split(/\s+/)
 
     commitsReportArr.forEach((str: string) => {
       if (/^\d+$/.test(str)) {
@@ -107,16 +105,16 @@ export class GitReport {
 
   async processLines() {
     for (const author of this.authors) {
-      const { stdout: shortstatLog } = await execTerminalCommand(
-        `git log --author="${author}" --pretty=tformat: --shortstat`
+      const authorShortstat = await this.terminalService.getGitAuthorShortstat(
+        author
       )
 
       if (this.options.debugMode) {
-        console.log('>>> DEBUG:', shortstatLog)
+        console.log('>>> DEBUG:', authorShortstat)
       }
 
-      this.addedLines.push(this.getAddedLinesFromUser(shortstatLog))
-      this.excludedLines.push(this.getDeletedLinesFromUser(shortstatLog))
+      this.addedLines.push(this.getAddedLinesFromUser(authorShortstat))
+      this.excludedLines.push(this.getDeletedLinesFromUser(authorShortstat))
     }
   }
 
