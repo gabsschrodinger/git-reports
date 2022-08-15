@@ -31,15 +31,13 @@ export class GitReport {
     commitsReportArr.forEach((str: string) => {
       if (/^\d+$/.test(str)) {
         this.commits.push(Number(str))
+      } else if (/\S+@\S+\.\S+/.test(str)) {
+        this.emails.push(str)
+      } else if (this.commits.length > this.authors.length) {
+        this.authors.push(str)
       } else {
-        if (/\S+@\S+\.\S+/.test(str)) {
-          this.emails.push(str)
-        } else if (this.commits.length > this.authors.length) {
-          this.authors.push(str)
-        } else {
-          this.authors[this.authors.length - 1] =
-            this.authors[this.authors.length - 1] + ' ' + str
-        }
+        this.authors[this.authors.length - 1] =
+          this.authors[this.authors.length - 1] + ' ' + str
       }
     })
 
@@ -60,47 +58,31 @@ export class GitReport {
   }
 
   private getAddedLinesFromUser(shortstatLog: string) {
-    try {
-      const addedLinesRegex = /\d+(?=\s+insertion)/g
+    const addedLinesRegex = /\d+(?=\s+insertion)/g
 
-      const addedLinesCollection = shortstatLog.match(addedLinesRegex)
+    const addedLinesCollection = shortstatLog.match(addedLinesRegex)
 
-      if (!addedLinesCollection) {
-        return 0
-      }
-
-      return addedLinesCollection
-        .map((addedLines) => Number(addedLines))
-        .reduce((sum, addedLines) => sum + addedLines, 0)
-    } catch (error) {
-      if (this.options.debugMode) {
-        console.log('>>> DEBUG:', { error })
-      }
-
+    if (!addedLinesCollection) {
       return 0
     }
+
+    return addedLinesCollection
+      .map((addedLines) => Number(addedLines))
+      .reduce((sum, addedLines) => sum + addedLines, 0)
   }
 
   private getDeletedLinesFromUser(shortstatLog: string) {
-    try {
-      const deletedLinesRegex = /\d+(?=\s+deletion)/g
+    const deletedLinesRegex = /\d+(?=\s+deletion)/g
 
-      const deletedLinesCollection = shortstatLog.match(deletedLinesRegex)
+    const deletedLinesCollection = shortstatLog.match(deletedLinesRegex)
 
-      if (!deletedLinesCollection) {
-        return 0
-      }
-
-      return deletedLinesCollection
-        .map((deletedLines) => Number(deletedLines))
-        .reduce((sum, deletedLines) => sum + deletedLines, 0)
-    } catch (error) {
-      if (this.options.debugMode) {
-        console.log('>>> DEBUG:', { error })
-      }
-
+    if (!deletedLinesCollection) {
       return 0
     }
+
+    return deletedLinesCollection
+      .map((deletedLines) => Number(deletedLines))
+      .reduce((sum, deletedLines) => sum + deletedLines, 0)
   }
 
   async processLines() {

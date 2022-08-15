@@ -15,9 +15,11 @@ const config = {
   '--order': String,
 }
 
+type Args = ReturnType<typeof arg<typeof config>>
+
 function getArgValue<T>(
   argKey: keyof typeof config,
-  args: ReturnType<typeof arg<typeof config>>,
+  args: Args,
   defaultValue: T,
   validateType: (value: any) => value is T
 ): T {
@@ -38,13 +40,11 @@ function getArgValue<T>(
   return defaultValue
 }
 
-function getOrderByValue(
-  args: ReturnType<typeof arg<typeof config>>
-): keyof GitReportEntry {
+function getOrderByValue(args: Args): keyof GitReportEntry {
   return getArgValue('--order-by', args, 'commits', isGitReportEntryKey)
 }
 
-function getOrderValue(args: ReturnType<typeof arg<typeof config>>): Order {
+function getOrderValue(args: Args): Order {
   return getArgValue('--order', args, Order.DESC, isOrder)
 }
 

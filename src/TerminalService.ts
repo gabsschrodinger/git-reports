@@ -15,7 +15,7 @@ export class TerminalService {
 
   private getGitShortlogCommand() {
     const baseCommand = 'git shortlog -s -n -e --all'
-    const noMergesFlag = this.options.includeMerges ? '--no-merges' : ''
+    const noMergesFlag = this.options.includeMerges ? ' --no-merges' : ''
 
     return baseCommand + noMergesFlag
   }
