@@ -48,7 +48,7 @@ function sortNumbericValue(
 ) {
   const diff = firstValue - secondValue
 
-  if (order === Order.ASC) {
+  if (order === 'ASC') {
     return diff
   }
 
@@ -66,14 +66,14 @@ function sortStringValue(
 
   const firstIsGreater = firstValue > secondValue
 
-  if (order === Order.ASC) {
+  if (order === 'ASC') {
     return +firstIsGreater
   }
 
   return -firstIsGreater
 }
 
-function isType<T>(type: string) {
+function isType<T>(type: 'string' | 'number') {
   return (value: any): value is T => typeof value === type
 }
 

@@ -4,11 +4,11 @@ import { ReportFormatter } from './ReportFormatter'
 import { groupUsersBy } from './utils'
 
 export class GitReport {
-  public authors: string[] = []
-  public emails: string[] = []
-  public commits: number[] = []
-  public addedLines: number[] = []
-  public excludedLines: number[] = []
+  private authors: string[] = []
+  private emails: string[] = []
+  private commits: number[] = []
+  private addedLines: number[] = []
+  private excludedLines: number[] = []
   private readonly options: GitReportOptions
   private readonly reportFormatter: ReportFormatter
   private readonly terminalService: TerminalService
@@ -101,6 +101,12 @@ export class GitReport {
   }
 
   getReport() {
-    return this.reportFormatter.generateReport(this)
+    return this.reportFormatter.generateReport({
+      authors: this.authors,
+      emails: this.emails,
+      commits: this.commits,
+      addedLines: this.addedLines,
+      excludedLines: this.excludedLines,
+    })
   }
 }

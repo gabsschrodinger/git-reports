@@ -45,7 +45,7 @@ function getOrderByValue(args: Args): keyof GitReportEntry {
 }
 
 function getOrderValue(args: Args): Order {
-  return getArgValue('--order', args, Order.DESC, isOrder)
+  return getArgValue('--order', args, "DESC", isOrder)
 }
 
 export function parseArgs(rawArgs: string[]): GitReportOptions {
