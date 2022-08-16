@@ -4,7 +4,7 @@ import {
   GitReportEntry,
   GitReportOptions,
 } from './types'
-import { groupUsersBy, sortReportBy } from './utils'
+import { groupUsersBy, sortNumbericValues, sortStringValues } from './utils'
 
 export class ReportFormatter {
   private reportEntries: GitReportEntry[] = []
@@ -28,10 +28,16 @@ export class ReportFormatter {
   }
 
   private sortReport() {
-    this.reportEntries = sortReportBy(
-      this.options.orderBy,
-      this.options.order
-    )(this.reportEntries)
+    const field = this.options.orderBy
+    if (field === 'author' || field === 'email') {
+      this.reportEntries = this.reportEntries.sort((a, b) =>
+        sortStringValues(a[field], b[field], this.options.order)
+      )
+    } else {
+      this.reportEntries = this.reportEntries.sort((a, b) =>
+        sortNumbericValues(a[field], b[field], this.options.order)
+      )
+    }
   }
 
   generateReport({

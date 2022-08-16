@@ -41,7 +41,7 @@ export function groupUsersBy(field: keyof GitReportEntry) {
   }
 }
 
-function sortNumbericValue(
+export function sortNumbericValues(
   firstValue: number,
   secondValue: number,
   order: Order
@@ -55,7 +55,7 @@ function sortNumbericValue(
   return -diff
 }
 
-function sortStringValue(
+export function sortStringValues(
   firstValue: string,
   secondValue: string,
   order: Order
@@ -71,28 +71,4 @@ function sortStringValue(
   }
 
   return -firstIsGreater
-}
-
-function isType<T>(type: 'string' | 'number') {
-  return (value: any): value is T => typeof value === type
-}
-
-const isString = isType<string>('string')
-const isNumber = isType<number>('number')
-
-export function sortReportBy(field: keyof GitReportEntry, order: Order) {
-  return function (report: GitReportEntry[]) {
-    return report.sort((a, b) => {
-      const firstValue = a[field]
-      const secondValue = b[field]
-
-      if (isNumber(firstValue) && isNumber(secondValue)) {
-        return sortNumbericValue(firstValue, secondValue, order)
-      } else if (isString(firstValue) && isString(secondValue)) {
-        return sortStringValue(firstValue, secondValue, order)
-      }
-
-      return 0
-    })
-  }
 }
