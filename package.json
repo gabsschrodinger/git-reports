@@ -13,7 +13,7 @@
     "build:raw": "tsc",
     "lint": "eslint",
     "build": "sh build.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "cli",

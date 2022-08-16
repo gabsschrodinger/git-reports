@@ -15,8 +15,8 @@ export function groupUsersBy(field: keyof GitReportEntry) {
 
         const reducedEntry = duplicateEntries.reduce(
           (reducedEntry, newEntry) => ({
-            author: reducedEntry.author,
-            email: reducedEntry.email,
+            author: duplicateEntries[0].author,
+            email: duplicateEntries[0].email,
             commits: reducedEntry.commits + newEntry.commits,
             'added lines':
               reducedEntry['added lines'] + newEntry['added lines'],
@@ -24,8 +24,7 @@ export function groupUsersBy(field: keyof GitReportEntry) {
               reducedEntry['excluded lines'] + newEntry['excluded lines'],
             'total lines':
               reducedEntry['total lines'] + newEntry['total lines'],
-          }),
-          { ...duplicateEntries[0] }
+          })
         )
 
         const filteredReport = report.filter(

@@ -37,11 +37,3 @@ export function isGitReportEntryKey(
 }
 
 export type GitReport = Partial<GitReportEntry>[]
-
-export interface GitReportData {
-  authors: string[]
-  emails: string[]
-  commits: number[]
-  addedLines: number[]
-  excludedLines: number[]
-}

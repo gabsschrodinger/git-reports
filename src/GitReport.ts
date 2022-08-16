@@ -1,14 +1,10 @@
 import { TerminalService } from './TerminalService'
-import { GitReportOptions } from './types'
+import { GitReportEntry, GitReportOptions } from './types'
 import { FormattingService } from './FormattingService'
 import { groupUsersBy } from './utils'
 
 export class GitReport {
-  private authors: string[] = []
-  private emails: string[] = []
-  private commits: number[] = []
-  private addedLines: number[] = []
-  private excludedLines: number[] = []
+  private entries: GitReportEntry[] = []
   private readonly options: GitReportOptions
   private readonly formattingService: FormattingService
   private readonly terminalService: TerminalService
@@ -20,6 +16,10 @@ export class GitReport {
   }
 
   async processCommits(): Promise<void> {
+    const authors: string[] = []
+    const emails: string[] = []
+    const commits: number[] = []
+
     const gitShortlog = await this.terminalService.getGitShortlog()
 
     if (this.options.debugMode) {
@@ -30,31 +30,26 @@ export class GitReport {
 
     commitsReportArr.forEach((str: string) => {
       if (/^\d+$/.test(str)) {
-        this.commits.push(Number(str))
+        commits.push(Number(str))
       } else if (/\S+@\S+\.\S+/.test(str)) {
-        this.emails.push(str)
-      } else if (this.commits.length > this.authors.length) {
-        this.authors.push(str)
+        emails.push(str)
+      } else if (commits.length > authors.length) {
+        authors.push(str)
       } else {
-        this.authors[this.authors.length - 1] =
-          this.authors[this.authors.length - 1] + ' ' + str
+        authors[authors.length - 1] = authors[authors.length - 1] + ' ' + str
       }
     })
 
-    const groupedEntries = groupUsersBy('author')(
-      this.authors.map((author, index) => ({
+    this.entries = groupUsersBy('author')(
+      authors.map((author, index) => ({
         author,
-        email: this.emails[index],
-        commits: this.commits[index],
+        email: emails[index],
+        commits: commits[index],
         'added lines': 0,
         'excluded lines': 0,
         'total lines': 0,
       }))
     )
-
-    this.authors = groupedEntries.map((entry) => entry.author)
-    this.emails = groupedEntries.map((entry) => entry.email)
-    this.commits = groupedEntries.map((entry) => entry.commits)
   }
 
   private getAddedLinesFromUser(shortstatLog: string) {
@@ -86,27 +81,22 @@ export class GitReport {
   }
 
   async processLines() {
-    for (const author of this.authors) {
+    for (const entry of this.entries) {
       const authorShortstat = await this.terminalService.getGitAuthorShortstat(
-        author
+        entry.author
       )
 
       if (this.options.debugMode) {
         console.log('>>> DEBUG:', authorShortstat)
       }
 
-      this.addedLines.push(this.getAddedLinesFromUser(authorShortstat))
-      this.excludedLines.push(this.getDeletedLinesFromUser(authorShortstat))
+      entry['added lines'] = this.getAddedLinesFromUser(authorShortstat)
+      entry['excluded lines'] = this.getDeletedLinesFromUser(authorShortstat)
+      entry['total lines'] = entry['added lines'] + entry['excluded lines']
     }
   }
 
   getReport() {
-    return this.formattingService.generateReport({
-      authors: this.authors,
-      emails: this.emails,
-      commits: this.commits,
-      addedLines: this.addedLines,
-      excludedLines: this.excludedLines,
-    })
+    return this.formattingService.generateReport(this.entries)
   }
 }
