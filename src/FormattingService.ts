@@ -6,7 +6,7 @@ import {
 } from './types'
 import { groupUsersBy, sortNumbericValues, sortStringValues } from './utils'
 
-export class ReportFormatter {
+export class FormattingService {
   private reportEntries: GitReportEntry[] = []
   private readonly options: GitReportOptions
 

@@ -1,6 +1,6 @@
 import { TerminalService } from './TerminalService'
 import { GitReportOptions } from './types'
-import { ReportFormatter } from './ReportFormatter'
+import { FormattingService } from './FormattingService'
 import { groupUsersBy } from './utils'
 
 export class GitReport {
@@ -10,12 +10,12 @@ export class GitReport {
   private addedLines: number[] = []
   private excludedLines: number[] = []
   private readonly options: GitReportOptions
-  private readonly reportFormatter: ReportFormatter
+  private readonly formattingService: FormattingService
   private readonly terminalService: TerminalService
 
   constructor(options: GitReportOptions) {
     this.options = options
-    this.reportFormatter = new ReportFormatter(options)
+    this.formattingService = new FormattingService(options)
     this.terminalService = new TerminalService(options)
   }
 
@@ -101,7 +101,7 @@ export class GitReport {
   }
 
   getReport() {
-    return this.reportFormatter.generateReport({
+    return this.formattingService.generateReport({
       authors: this.authors,
       emails: this.emails,
       commits: this.commits,
