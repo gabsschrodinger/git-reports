@@ -1,23 +1,15 @@
-import { GitReportEntry, GitReportOptions } from '../src/types'
+import { GitReportEntry } from '../src/types'
 import { faker } from '@faker-js/faker'
 import { FormattingService } from '../src/FormattingService'
+import { createReportEntry, filter, getReportOptions } from './test.utils'
 
 describe('Formatting Service', () => {
-  const createReportEntry = (email?: string): GitReportEntry => ({
-    author: faker.name.fullName(),
-    commits: faker.datatype.number(),
-    email: email ?? faker.internet.email(),
-    'added lines': faker.datatype.number(),
-    'excluded lines': faker.datatype.number(),
-    'total lines': faker.datatype.number(),
-  })
-
   describe('generateReport', () => {
     it('should group users by email', () => {
       const sameEmail = faker.internet.email()
       const firstDuplicateEmailEntry = createReportEntry(sameEmail)
       const secondDuplicateEmailEntry = createReportEntry(sameEmail)
-      const reportEntries: GitReportEntry[] = [
+      const reportEntries = [
         firstDuplicateEmailEntry,
         createReportEntry(),
         secondDuplicateEmailEntry,
@@ -25,27 +17,18 @@ describe('Formatting Service', () => {
       ]
       const reportEntriesCopy: GitReportEntry[] = [...reportEntries]
 
-      const formattingService = new FormattingService({
-        orderBy: 'commits',
-        order: 'DESC',
-        includeEmail: true,
-      } as GitReportOptions)
+      const formattingService = new FormattingService(getReportOptions())
 
       const formattedReport = formattingService.generateReport(reportEntries)
+      const filteredReport = filter(formattedReport).by(
+        'author',
+        firstDuplicateEmailEntry.author
+      )
 
       expect(formattedReport.length).toBe(reportEntriesCopy.length - 1)
-      expect(
-        formattedReport.filter(
-          (entry) => entry.author === firstDuplicateEmailEntry.author
-        ).length
-      ).toBe(1)
-      expect(
-        formattedReport.filter(
-          (entry) => entry.author === firstDuplicateEmailEntry.author
-        )[0]
-      ).toEqual<Partial<GitReportEntry>>({
+      expect(filteredReport.length).toBe(1)
+      expect(filteredReport[0]).toEqual<Partial<GitReportEntry>>({
         author: firstDuplicateEmailEntry.author,
-        email: sameEmail,
         commits:
           firstDuplicateEmailEntry.commits + secondDuplicateEmailEntry.commits,
         'added lines':
