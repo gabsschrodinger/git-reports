@@ -1,10 +1,10 @@
 import { parseArgs } from './args'
-import { GitReport } from './GitReport'
+import { ReportService } from './ReportService'
 
 export async function cli(args: string[]): Promise<void> {
   const options = parseArgs(args)
 
-  const gitReport = new GitReport(options)
+  const gitReport = new ReportService(options)
 
   await gitReport.processCommits()
   await gitReport.processLines()

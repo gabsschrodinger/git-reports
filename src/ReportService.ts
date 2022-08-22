@@ -3,7 +3,7 @@ import { GitReportEntry, GitReportOptions } from './types'
 import { FormattingService } from './FormattingService'
 import { groupUsersBy } from './utils'
 
-export class GitReport {
+export class ReportService {
   private entries: GitReportEntry[] = []
   private readonly options: GitReportOptions
   private readonly formattingService: FormattingService
