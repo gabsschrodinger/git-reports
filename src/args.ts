@@ -1,11 +1,6 @@
 import arg from 'arg'
-import {
-  GitReportEntry,
-  GitReportOptions,
-  isGitReportEntryKey,
-  isOrder,
-  Order,
-} from './types'
+import { GitReportEntry, GitReportOptions, Order } from './types'
+import { isGitReportEntryKey, isOrder } from './types.utils'
 
 const config = {
   '--include-merges': Boolean,
@@ -45,7 +40,7 @@ function getOrderByValue(args: Args): keyof GitReportEntry {
 }
 
 function getOrderValue(args: Args): Order {
-  return getArgValue('--order', args, "DESC", isOrder)
+  return getArgValue('--order', args, 'DESC', isOrder)
 }
 
 export function parseArgs(rawArgs: string[]): GitReportOptions {
