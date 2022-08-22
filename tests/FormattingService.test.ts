@@ -42,5 +42,69 @@ describe('Formatting Service', () => {
           secondDuplicateEmailEntry['total lines'],
       })
     })
+
+    it.each([
+      ['author'],
+      ['email'],
+      ['commits'],
+      ['added lines'],
+      ['excluded lines'],
+      ['total lines'],
+    ])('should sort the report by %s (DESC)', (field) => {
+      const reportEntries = Array.from({ length: 25 }, () =>
+        createReportEntry()
+      )
+
+      const formattingService = new FormattingService(
+        getReportOptions({
+          orderBy: field as keyof GitReportEntry,
+          order: 'DESC',
+          includeEmail: true,
+        })
+      )
+
+      const formattedReport = formattingService.generateReport(reportEntries)
+
+      formattedReport.forEach((entry, index) => {
+        if (index < formattedReport.length - 1) {
+          expect(
+            entry[field as keyof GitReportEntry]! >=
+              formattedReport[index + 1][field as keyof GitReportEntry]!
+          ).toBeTruthy()
+        }
+      })
+    })
+
+    it.each([
+      ['author'],
+      ['email'],
+      ['commits'],
+      ['added lines'],
+      ['excluded lines'],
+      ['total lines'],
+    ])('should sort the report by %s (ASC)', (field) => {
+      const reportEntries = Array.from({ length: 25 }, () =>
+        createReportEntry()
+      )
+
+      const formattingService = new FormattingService(
+        getReportOptions({
+          orderBy: field as keyof GitReportEntry,
+          order: 'ASC',
+          includeEmail: true,
+        })
+      )
+
+      const formattedReport = formattingService.generateReport(reportEntries)
+
+      formattedReport.forEach((entry, index) => {
+        if (index < formattedReport.length - 1) {
+          expect(
+            entry[field as keyof GitReportEntry]! <=
+              formattedReport[index + 1][field as keyof GitReportEntry]!
+          ).toBeTruthy()
+        }
+      })
+    })
   })
 })

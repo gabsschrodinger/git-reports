@@ -40,7 +40,7 @@ export function groupUsersBy(field: keyof GitReportEntry) {
   }
 }
 
-export function sortNumbericValues(
+export function sortNumericValues(
   firstValue: number,
   secondValue: number,
   order: Order
@@ -63,11 +63,9 @@ export function sortStringValues(
     return 0
   }
 
-  const firstIsGreater = firstValue > secondValue
-
   if (order === 'ASC') {
-    return +firstIsGreater
+    return firstValue > secondValue ? 1 : -1
   }
 
-  return -firstIsGreater
+  return firstValue > secondValue ? -1 : 1
 }

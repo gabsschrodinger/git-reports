@@ -1,5 +1,5 @@
 import { GitReport, GitReportEntry, GitReportOptions } from './types'
-import { groupUsersBy, sortNumbericValues, sortStringValues } from './utils'
+import { groupUsersBy, sortNumericValues, sortStringValues } from './utils'
 
 export class FormattingService {
   private reportEntries: GitReportEntry[] = []
@@ -30,7 +30,7 @@ export class FormattingService {
       )
     } else {
       this.reportEntries = this.reportEntries.sort((a, b) =>
-        sortNumbericValues(a[field], b[field], this.options.order)
+        sortNumericValues(a[field], b[field], this.options.order)
       )
     }
   }
