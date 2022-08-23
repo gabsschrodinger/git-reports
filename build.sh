@@ -9,3 +9,5 @@ cp package.json ./dist
 cp yarn.lock ./dist
 cp README.md ./dist
 cp -R bin ./dist
+
+sed -i '/husky install/d' dist/package.json

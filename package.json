@@ -10,11 +10,11 @@
     "access": "public"
   },
   "scripts": {
+    "prepare": "husky install",
     "build:raw": "tsc",
     "lint": "eslint",
     "build": "sh build.sh",
-    "test": "jest",
-    "prepare": "husky install"
+    "test": "jest"
   },
   "keywords": [
     "cli",
