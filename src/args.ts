@@ -1,19 +1,10 @@
 import arg from 'arg'
-import { GitReportEntry, GitReportOptions, Order } from './types'
+import { argsSpec } from './constants'
+import { Args, GitReportEntry, GitReportOptions, Order } from './types'
 import { isGitReportEntryKey, isOrder } from './types.utils'
 
-const config = {
-  '--include-merges': Boolean,
-  '--include-email': Boolean,
-  '--debug': Boolean,
-  '--order-by': String,
-  '--order': String,
-}
-
-type Args = ReturnType<typeof arg<typeof config>>
-
 function getArgValue<T>(
-  argKey: keyof typeof config,
+  argKey: keyof typeof argsSpec,
   args: Args,
   defaultValue: T,
   validateType: (value: any) => value is T
@@ -44,7 +35,7 @@ function getOrderValue(args: Args): Order {
 }
 
 export function parseArgs(rawArgs: string[]): GitReportOptions {
-  const args = arg(config, {
+  const args = arg(argsSpec, {
     argv: rawArgs.slice(2),
   })
 

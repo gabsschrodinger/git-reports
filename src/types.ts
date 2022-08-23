@@ -1,3 +1,6 @@
+import arg from 'arg'
+import { argsSpec } from './constants'
+
 export type Order = 'ASC' | 'DESC'
 
 export interface GitReportEntry {
@@ -18,3 +21,5 @@ export interface GitReportOptions {
 }
 
 export type GitReport = Partial<GitReportEntry>[]
+
+export type Args = ReturnType<typeof arg<typeof argsSpec>>

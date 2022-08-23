@@ -27,7 +27,7 @@ export function groupUsersBy(field: keyof GitReportEntry) {
           })
         )
 
-        const filteredReport = report.filter(
+        const filteredReport = newReport.filter(
           (entry) => entry[field] !== removedValue
         )
         filteredReport.push(reducedEntry)
@@ -44,7 +44,7 @@ export function sortNumericValues(
   firstValue: number,
   secondValue: number,
   order: Order
-) {
+): number {
   const diff = firstValue - secondValue
 
   if (order === 'ASC') {
